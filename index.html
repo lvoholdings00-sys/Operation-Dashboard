@@ -1012,7 +1012,17 @@ window.addEventListener('load',async()=>{
   let attempts=0;
   while(typeof Clerk==='undefined'&&attempts<30){await new Promise(r=>setTimeout(r,200));attempts++;}
   if(typeof Clerk==='undefined'){showError('Clerk failed to load.');return;}
-  try{setLoad('Authenticating…');await Clerk.load();}catch(e){showError('Clerk initialization failed: '+e.message);return;}
+  try{
+    setLoad('Authenticating…');
+    // FIX: this domain (dashboard.ops.wearelvo.com) is not the Clerk instance's
+    // primary domain — it needs to be told it's a satellite so Clerk can
+    // complete the cross-domain session handshake instead of hanging forever.
+    await Clerk.load({
+      isSatellite: true,
+      domain: 'dashboard.ops.wearelvo.com',
+      signInUrl: 'https://ops.wearelvo.com',
+    });
+  }catch(e){showError('Clerk initialization failed: '+e.message);return;}
 
   async function showDash(user){
     if(_dashInit){populateDash(user);return;}
