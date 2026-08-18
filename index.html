@@ -12,14 +12,6 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;900&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Cormorant+SC:wght@300;400;500&display=swap" rel="stylesheet"/>
 
-  <script
-    async
-    crossorigin="anonymous"
-    data-clerk-publishable-key="pk_live_Y2xlcmsub3BzLndlYXJlbHZvLmNvbSQ"
-    src="https://clerk.ops.wearelvo.com/npm/@clerk/clerk-js@latest/dist/clerk.browser.js"
-    type="text/javascript"
-  ></script>
-
   <style>
     *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
     input,textarea,select{font-size:16px !important}
@@ -64,7 +56,9 @@
     .tb-right{display:flex;align-items:center;gap:1rem}
     .tb-tier{font-family:'Cinzel',serif;font-size:.4rem;letter-spacing:.25em;color:var(--green);border:.5px solid var(--border);padding:.22rem .6rem;text-transform:uppercase}
     .tb-name{font-family:'Cinzel',serif;font-size:.42rem;letter-spacing:.2em;color:var(--dim2);text-transform:uppercase}
-    #clerkBtn{display:flex;align-items:center}
+    .tb-avatar{width:26px;height:26px;border-radius:50%;object-fit:cover;border:.5px solid rgba(29,158,117,.4)}
+    .tb-signout{background:none;border:.5px solid var(--border);color:var(--dim);font-family:'Cinzel',serif;font-size:.38rem;letter-spacing:.2em;padding:.4rem .7rem;cursor:pointer;text-transform:uppercase;transition:color .2s,border-color .2s}
+    .tb-signout:hover{color:var(--green);border-color:var(--green)}
 
     #shell{flex:1;display:flex;overflow:hidden;position:relative;z-index:1}
 
@@ -146,6 +140,7 @@
     .btn.ghost{border-color:var(--border);color:var(--dim2)}
     .btn.ghost:hover{background:var(--border);color:var(--chrome)}
     .btn.sm{font-size:.38rem;padding:.5rem .85rem}
+    .btn.xs{font-size:.34rem;padding:.35rem .65rem}
     .btn.danger{border-color:rgba(204,32,32,.4);color:var(--red-hi)}
     .btn.danger:hover{background:var(--red-hi);color:var(--white)}
     .btn:disabled{opacity:.38;cursor:not-allowed}
@@ -239,15 +234,23 @@
     .adm-badge{display:inline-flex;align-items:center;gap:.5rem;border:.5px solid rgba(29,158,117,.35);padding:.28rem .7rem;margin-bottom:1rem}
     .adm-badge span{font-family:'Cinzel',serif;font-size:.36rem;letter-spacing:.28em;color:var(--green);text-transform:uppercase}
 
+    .prof-form{display:grid;gap:.9rem;max-width:420px}
+
+    .adm-tabs{display:flex;gap:0;margin-bottom:1.5rem;border-bottom:.5px solid var(--border)}
+    .adm-tab{font-family:'Cinzel',serif;font-size:.42rem;letter-spacing:.25em;color:var(--dim2);padding:.75rem 1.2rem;cursor:pointer;text-transform:uppercase;border-bottom:2px solid transparent;transition:all .2s;background:none;border-left:none;border-right:none;border-top:none}
+    .adm-tab:hover{color:var(--chrome)}
+    .adm-tab.active{color:var(--green);border-bottom-color:var(--green)}
+    .adm-section{display:none}.adm-section.active{display:block;animation:panelIn .25s ease}
+    .member-row{display:grid;grid-template-columns:1fr 140px 80px;gap:.8rem;align-items:center;padding:.95rem 0;border-bottom:.5px solid var(--border)}
+    .member-row:last-child{border-bottom:none}
+    .member-name{font-family:'Cinzel',serif;font-size:.54rem;letter-spacing:.14em;color:var(--chrome)}
+    .member-email{font-size:.78rem;font-style:italic;color:var(--dim);margin-top:.15rem}
+
     #toasts{position:fixed;bottom:calc(var(--bottom-nav) + .8rem);right:1rem;z-index:9000;display:flex;flex-direction:column;gap:.4rem}
     .tst{font-family:'Cinzel',serif;font-size:.4rem;letter-spacing:.2em;padding:.65rem 1rem;border:.5px solid var(--border-hi);background:var(--bg2);color:var(--green);text-transform:uppercase;animation:tstIn .25s ease}
     .tst.err{color:var(--red-hi);border-color:rgba(204,32,32,.3)}
+    .tst.ok{color:#22c55e;border-color:rgba(34,197,94,.3)}
     @keyframes tstIn{from{opacity:0;transform:translateX(8px)}to{opacity:1;transform:translateX(0)}}
-
-    #p-account{contain:layout style}
-    #clerkProfile{overflow:visible;min-height:200px}
-    #clerkProfile > *{display:block}
-    .cl-avatarBox,.cl-avatar,.cl-userButtonAvatarBox,.cl-userButtonAvatar{border-radius:50%!important;overflow:hidden!important}
 
     @media(max-width:900px){
       :root{--sidebar:190px}
@@ -266,6 +269,7 @@
       .domain-grid{grid-template-columns:1fr}
       .ph-left .ph-title{font-size:1.15rem}
       .tb-crumb,.tb-tier{display:none}
+      .member-row{grid-template-columns:1fr;gap:.4rem}
       #toasts{bottom:calc(var(--bottom-nav) + .5rem);right:.5rem;left:.5rem}
       .tst{font-size:.38rem;padding:.55rem .8rem}
     }
@@ -284,8 +288,8 @@
 
 <div id="errorScreen">
   <div class="ls-rule"></div>
-  <div class="err-title">Authentication Error</div>
-  <div class="err-msg" id="errMsg">Unable to initialize the Clerk authentication service.</div>
+  <div class="err-title">Session Error</div>
+  <div class="err-msg" id="errMsg">Unable to verify your session.</div>
   <button class="btn" onclick="window.location.reload()">↺ Retry</button>
   <a class="btn ghost" href="https://ops.wearelvo.com" style="text-decoration:none;display:inline-flex;align-items:center;padding:.7rem 1.2rem">← Return to site</a>
 </div>
@@ -299,7 +303,8 @@
   <div class="tb-right">
     <span class="tb-name" id="tbName"></span>
     <span class="tb-tier" id="tbTier"></span>
-    <div id="clerkBtn"></div>
+    <img class="tb-avatar" id="tbAvatar" style="display:none"/>
+    <button class="tb-signout" id="tbSignOut" type="button">Sign Out</button>
   </div>
 </div>
 
@@ -487,7 +492,7 @@
       <div id="admBadgeWrap" style="display:none"><div class="adm-badge"><span>⬡ LVO Administration · Executive Access</span></div></div>
       <div class="tier-band">
         <div><div class="tb-tier-lbl">Current Standing</div><div class="tb-tier-val" id="acTier">—</div></div>
-        <div class="tb-note">Contact LVO Holdings administration for tier corrections.</div>
+        <div class="tb-note">Tier is set by LVO Holdings administration — contact them for corrections.</div>
       </div>
       <div class="ig">
         <div class="ic"><div class="ic-lbl">Full Name</div><div class="ic-val" id="acName">—</div></div>
@@ -495,11 +500,34 @@
         <div class="ic"><div class="ic-lbl">Division</div><div class="ic-val">Operations · Social Services</div></div>
         <div class="ic"><div class="ic-lbl">Role</div><div class="ic-val" id="acRole">—</div></div>
         <div class="ic"><div class="ic-lbl">Member Since</div><div class="ic-val" id="acJoined">—</div></div>
-        <div class="ic"><div class="ic-lbl">Portal</div><div class="ic-val">Operations Dashboard v1.1</div></div>
+        <div class="ic"><div class="ic-lbl">Portal</div><div class="ic-val">Operations Dashboard v1.2</div></div>
       </div>
       <div class="card">
         <div class="ch"><span class="ct">Manage Account</span></div>
-        <div class="cb" id="clerkProfile" style="overflow:visible;min-height:200px"></div>
+        <div class="cb">
+          <div class="prof-form">
+            <div class="form-field">
+              <label class="fl">First Name</label>
+              <input class="fi" id="profFirstName" type="text"/>
+            </div>
+            <div class="form-field">
+              <label class="fl">Last Name</label>
+              <input class="fi" id="profLastName" type="text"/>
+            </div>
+            <div class="form-field">
+              <label class="fl">Username</label>
+              <input class="fi" id="profUsername" type="text"/>
+            </div>
+            <div class="form-field">
+              <label class="fl">Avatar</label>
+              <input class="fi" id="profAvatarFile" type="file" accept="image/*"/>
+            </div>
+            <div class="btn-row">
+              <button class="btn sm" onclick="saveProfile()">Save Changes →</button>
+            </div>
+            <p style="font-size:.78rem;font-style:italic;color:var(--dim)">Email and division can't be changed here — contact LVO Administration. Forgot your password? Email accountrecovery@wearelvo.com.</p>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -510,18 +538,40 @@
         <div class="ph-rule"></div>
       </div>
       <div class="stat-bar" style="margin-bottom:1.5rem">
+        <div class="sc"><div class="sc-lbl">Total Members</div><div class="sc-val" id="admTotal">—</div></div>
         <div class="sc"><div class="sc-lbl">Total Youth</div><div class="sc-val" id="admYouth">—</div></div>
-        <div class="sc"><div class="sc-lbl">Facilities</div><div class="sc-val" id="admFacilities">—</div></div>
         <div class="sc"><div class="sc-lbl">Your Standing</div><div class="sc-val" id="admMyTier">—</div></div>
-        <div class="sc"><div class="sc-lbl">Version</div><div class="sc-val">1.1 · 2026</div></div>
+        <div class="sc"><div class="sc-lbl">Version</div><div class="sc-val">1.2 · 2026</div></div>
       </div>
-      <div class="card">
-        <div class="ch"><span class="ct">Data Summary</span></div>
-        <div class="cb">
-          <div class="ir"><span class="ir-lbl">Youth Records</span><span class="ir-val" id="admSumYouth">—</span></div>
-          <div class="ir"><span class="ir-lbl">Inspection Logs</span><span class="ir-val" id="admSumIns">—</span></div>
-          <div class="ir"><span class="ir-lbl">Compliance Items</span><span class="ir-val" id="admSumCmp">—</span></div>
-          <div class="ir"><span class="ir-lbl">Skill Entries</span><span class="ir-val" id="admSumEntries">—</span></div>
+
+      <div class="adm-tabs">
+        <button class="adm-tab active" onclick="switchAdmTab('members',this)">Members</button>
+        <button class="adm-tab" onclick="switchAdmTab('summary',this)">Data Summary</button>
+      </div>
+
+      <div class="adm-section active" id="adm-members">
+        <div class="card">
+          <div class="ch">
+            <span class="ct">Member Tier Management</span>
+            <div style="display:flex;gap:.8rem;align-items:center;flex-wrap:wrap">
+              <input id="memberSearch" placeholder="Search name or email…" style="background:transparent;border:.5px solid var(--border);color:var(--white);font-family:'Cormorant Garamond',serif;font-size:.9rem;padding:.5rem .8rem;outline:none;width:220px" oninput="filterMembers()"/>
+              <span class="cm" id="memberCount"></span>
+              <button class="btn sm ghost" onclick="loadAdminMembers()">↺ Refresh</button>
+            </div>
+          </div>
+          <div class="cb" id="admList"><div class="empty">Loading members…</div></div>
+        </div>
+      </div>
+
+      <div class="adm-section" id="adm-summary">
+        <div class="card">
+          <div class="ch"><span class="ct">Data Summary</span></div>
+          <div class="cb">
+            <div class="ir"><span class="ir-lbl">Youth Records</span><span class="ir-val" id="admSumYouth">—</span></div>
+            <div class="ir"><span class="ir-lbl">Inspection Logs</span><span class="ir-val" id="admSumIns">—</span></div>
+            <div class="ir"><span class="ir-lbl">Compliance Items</span><span class="ir-val" id="admSumCmp">—</span></div>
+            <div class="ir"><span class="ir-lbl">Skill Entries</span><span class="ir-val" id="admSumEntries">—</span></div>
+          </div>
         </div>
       </div>
     </div>
@@ -640,8 +690,11 @@
 
 <div id="toasts"></div>
 
+<script src="assets/auth-client.js"></script>
 <script>
 const TIER_LABELS={1:'Tier I — Principal',2:'Tier II — Associate',3:'Tier III — Partner',4:'Tier IV — Member'};
+const THIS_DIVISION = 'Ops';
+const MARKETING_SITE = 'https://ops.wearelvo.com';
 const SKILL_MAP={
   'Daily Living':['Meal planning & cooking','Personal hygiene','Laundry & household chores','Time management','Transportation / transit use'],
   'Financial Literacy':['Budgeting basics','Banking / checking account','Paying bills','Credit & debt awareness','Employment & taxes'],
@@ -650,24 +703,8 @@ const SKILL_MAP={
   'Social Skills':['Conflict resolution','Communication skills','Healthy relationships','Community involvement','Cultural identity'],
   'Housing':['Finding housing','Lease understanding','Renter rights & responsibilities','Utilities & household costs','Roommate skills']
 };
-const APPEARANCE={
-  variables:{colorBackground:'#080808',colorText:'#F0EEEC',colorPrimary:'#1D9E75',colorInputBackground:'transparent',colorInputText:'#F0EEEC',borderRadius:'0px',fontFamily:"'Cormorant Garamond',Georgia,serif"},
-  elements:{
-    card:{background:'transparent',border:'.5px solid rgba(29,158,117,.2)',boxShadow:'none',borderRadius:'0'},
-    headerTitle:{fontFamily:"'Cinzel',serif",letterSpacing:'.2em',color:'#C8C8D0'},
-    formFieldLabel:{color:'#888880',fontFamily:"'Cinzel',serif",letterSpacing:'.12em',fontSize:'.7rem'},
-    formFieldInput:{background:'transparent',border:'.5px solid rgba(29,158,117,.3)',borderRadius:'0',color:'#F0EEEC'},
-    formButtonPrimary:{background:'transparent',border:'.5px solid #1D9E75',borderRadius:'0',color:'#1D9E75',fontFamily:"'Cinzel',serif",letterSpacing:'.3em',textTransform:'uppercase',boxShadow:'none'},
-    footerActionLink:{color:'#1D9E75'},
-    avatarBox:{border:'.5px solid rgba(29,158,117,.35)',borderRadius:'50%'},
-    userButtonPopoverCard:{background:'#080808',border:'.5px solid rgba(29,158,117,.25)',boxShadow:'0 8px 32px rgba(0,0,0,.8)'},
-    userButtonPopoverActionButton:{color:'#F0EEEC'},
-    userButtonPopoverActionButtonText:{color:'#F0EEEC'},
-    userButtonPopoverFooter:{background:'#080808'}
-  }
-};
 
-let _U=null,_profileMounted=false,_dashInit=false,_selYouth=null,_cmpFilter='all';
+let _U=null,_dashInit=false,_selYouth=null,_cmpFilter='all',_members=[];
 
 function lsGet(k,fb){try{return JSON.parse(localStorage.getItem(k)||(fb!==undefined?JSON.stringify(fb):null))||fb}catch(e){return fb}}
 function lsSet(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
@@ -681,9 +718,9 @@ function getCompliance(){return lsGet('lvo_ops_compliance',[])}
 function setCompliance(d){lsSet('lvo_ops_compliance',d)}
 
 function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
-function toast(msg,err=false){const z=document.getElementById('toasts');const el=document.createElement('div');el.className='tst'+(err?' err':'');el.textContent=msg;z.appendChild(el);setTimeout(()=>el.remove(),3200)}
+function toast(msg,err=false){const z=document.getElementById('toasts');const el=document.createElement('div');el.className='tst'+(err?' err':' ok');el.textContent=msg;z.appendChild(el);setTimeout(()=>el.remove(),3200)}
 function setLoad(msg){const el=document.getElementById('loadStatus');if(el)el.textContent=msg}
-function showError(msg){document.getElementById('loadScreen').classList.add('out');document.getElementById('errMsg').textContent=msg;document.getElementById('errorScreen').classList.add('show')}
+function showError(msg){document.getElementById('loadScreen')?.classList.add('out');document.getElementById('errMsg').textContent=msg;document.getElementById('errorScreen').classList.add('show')}
 function fmtDate(d){return d?new Date(d+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}):'—'}
 function daysDiff(d){if(!d)return null;return Math.ceil((new Date(d)-new Date())/(1000*60*60*24))}
 function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,6)}
@@ -696,21 +733,38 @@ function goTo(id){
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.toggle('active',n.dataset.p===id));
   document.querySelectorAll('.bn-item').forEach(n=>n.classList.toggle('active',n.dataset.p===id));
   document.querySelectorAll('.panel').forEach(p=>p.classList.toggle('active',p.id==='p-'+id));
-  if(id==='admin')refreshAdminStats();
+  if(id==='admin')initAdminPanel();
   document.getElementById('main').scrollTop=0;
 }
 
+function switchAdmTab(name,btn){
+  document.querySelectorAll('.adm-tab').forEach(t=>t.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.adm-section').forEach(s=>s.classList.remove('active'));
+  document.getElementById('adm-'+name).classList.add('active');
+  if(name==='members')loadAdminMembers();
+}
+
+/* ── WORKER FETCH (Bearer-authed via LVOAuth) ── */
+function workerFetch(path, opts={}){
+  return LVOAuth._request(path, opts).then(data => ({ ok:true, json:async()=>data }))
+    .catch(e => ({ ok:false, status:e.status||500, json:async()=>e.data||{error:e.message}, text:async()=>e.message }));
+}
+function adminFetch(path, opts={}){ return workerFetch(path, opts); }
+
+/* ── POPULATE DASHBOARD (from LVOAuth session user) ── */
 function populateDash(user){
-  const meta=user.publicMetadata||{};
-  const name=user.fullName||user.firstName||'Member';
-  const email=user.primaryEmailAddress?.emailAddress||'—';
-  const isAdmin=meta.role==='admin';
-  const tier=parseInt(meta.tier)||4;
-  const role=meta.role||'—';
+  const name=`${user.firstName||''} ${user.lastName||''}`.trim()||user.username||'Member';
+  const email=user.email||'—';
+  const isAdmin=user.role==='admin';
+  const tier=parseInt(user.tier)||4;
+  const role=user.role||'member';
   const joined=user.createdAt?new Date(user.createdAt).toLocaleDateString('en-US',{month:'long',year:'numeric'}):'—';
-  _U={uid:user.id,name,email,isAdmin,tier,role,joined};
+  _U={uid:user.id,name,email,isAdmin,tier,role,joined,avatar:user.avatar||'',username:user.username||''};
+
   document.getElementById('tbName').textContent=name;
   document.getElementById('tbTier').textContent=TIER_LABELS[tier]||TIER_LABELS[4];
+  if(user.avatar){const av=document.getElementById('tbAvatar');av.src=user.avatar;av.style.display='inline-block';}
   document.getElementById('ovTitle').textContent=`Welcome, ${name.split(' ')[0]}`;
   document.getElementById('ovTier').textContent=TIER_LABELS[tier]||TIER_LABELS[4];
   document.getElementById('acTier').textContent=TIER_LABELS[tier]||TIER_LABELS[4];
@@ -718,11 +772,42 @@ function populateDash(user){
   document.getElementById('acEmail').textContent=email;
   document.getElementById('acRole').textContent=role!=='admin'?role:'Administrator';
   document.getElementById('acJoined').textContent=joined;
+  document.getElementById('profFirstName').value=user.firstName||'';
+  document.getElementById('profLastName').value=user.lastName||'';
+  document.getElementById('profUsername').value=user.username||'';
   document.getElementById('admBadgeWrap').style.display=isAdmin?'block':'none';
   document.getElementById('adminNav').style.display=isAdmin?'flex':'none';
   const bnAdmin=document.getElementById('bnAdminItem');if(bnAdmin)bnAdmin.style.display=isAdmin?'flex':'none';
   const amt=document.getElementById('admMyTier');if(amt)amt.textContent=TIER_LABELS[tier]||TIER_LABELS[4];
   refreshAll();
+}
+
+async function saveProfile(){
+  const firstName=document.getElementById('profFirstName').value.trim();
+  const lastName=document.getElementById('profLastName').value.trim();
+  const username=document.getElementById('profUsername').value.trim();
+  const fileInput=document.getElementById('profAvatarFile');
+
+  const applyUpdate=async(avatar)=>{
+    try{
+      const fields={firstName,lastName,username};
+      if(avatar!==undefined)fields.avatar=avatar;
+      const updated=await LVOAuth.updateProfile(fields);
+      _U.name=`${updated.firstName} ${updated.lastName}`.trim();
+      document.getElementById('tbName').textContent=_U.name;
+      document.getElementById('acName').textContent=_U.name;
+      if(updated.avatar){const av=document.getElementById('tbAvatar');av.src=updated.avatar;av.style.display='inline-block';}
+      toast('Profile updated');
+    }catch(e){toast('Failed: '+(e.data?.error||e.message),true);}
+  };
+
+  if(fileInput.files&&fileInput.files[0]){
+    const reader=new FileReader();
+    reader.onload=()=>applyUpdate(reader.result);
+    reader.readAsDataURL(fileInput.files[0]);
+  }else{
+    applyUpdate(undefined);
+  }
 }
 
 function refreshAll(){renderYouthTable();renderInspections();renderCompliance();refreshOverview();}
@@ -996,53 +1081,117 @@ function exportCompliance(){
   a.download=`lvo-ops-compliance-${new Date().toISOString().slice(0,10)}.csv`;a.click();toast('Report exported.');
 }
 
-function refreshAdminStats(){
+/* ── ADMIN: DATA SUMMARY ── */
+function initAdminPanel(){
+  if(!_U?.isAdmin)return;
+  const amt=document.getElementById('admMyTier');if(amt)amt.textContent=TIER_LABELS[_U.tier]||TIER_LABELS[4];
+  loadAdminMembers();
+  refreshAdminSummary();
+}
+
+function refreshAdminSummary(){
   const y=getYouth().length,ins=getInspections().length,cmp=getCompliance().length,entries=getEntries().length;
-  const facs=[...new Set(getYouth().map(y=>y.facility))].length;
   document.getElementById('admYouth').textContent=y;
-  document.getElementById('admFacilities').textContent=facs;
   document.getElementById('admSumYouth').textContent=`${y} record${y!==1?'s':''}`;
   document.getElementById('admSumIns').textContent=`${ins} log${ins!==1?'s':''}`;
   document.getElementById('admSumCmp').textContent=`${cmp} item${cmp!==1?'s':''}`;
   document.getElementById('admSumEntries').textContent=`${entries} entr${entries!==1?'ies':'y'}`;
 }
 
-window.addEventListener('load',async()=>{
-  setLoad('Loading Clerk…');
-  let attempts=0;
-  while(typeof Clerk==='undefined'&&attempts<30){await new Promise(r=>setTimeout(r,200));attempts++;}
-  if(typeof Clerk==='undefined'){showError('Clerk failed to load.');return;}
+/* ── ADMIN: MEMBERS (tier is assigned here — the same pattern as Alliance/Vindex) ── */
+async function loadAdminMembers(){
+  const el=document.getElementById('admList');
+  el.innerHTML='<div class="empty">Loading…</div>';
   try{
-    setLoad('Authenticating…');
-    // FIX: this domain (dashboard.ops.wearelvo.com) is not the Clerk instance's
-    // primary domain — it needs to be told it's a satellite so Clerk can
-    // complete the cross-domain session handshake instead of hanging forever.
-    await Clerk.load({
-      isSatellite: true,
-      domain: 'dashboard.ops.wearelvo.com',
-      signInUrl: 'https://ops.wearelvo.com',
-    });
-  }catch(e){showError('Clerk initialization failed: '+e.message);return;}
+    const res=await adminFetch('/members');
+    if(!res.ok)throw new Error(`HTTP ${res.status}`);
+    _members=await res.json();
+    document.getElementById('admTotal').textContent=_members.length;
+    renderMemberList(_members);
+  }catch(e){el.innerHTML=`<div class="empty" style="color:var(--red-hi)">Error: ${esc(e.message)}</div>`;}
+}
 
-  async function showDash(user){
-    if(_dashInit){populateDash(user);return;}
-    setLoad('Loading profile…');
-    try{await user.reload();}catch(e){}
-    try{Clerk.mountUserButton(document.getElementById('clerkBtn'),{appearance:APPEARANCE});}catch(e){}
-    if(!_profileMounted){try{Clerk.mountUserProfile(document.getElementById('clerkProfile'),{appearance:APPEARANCE});_profileMounted=true;}catch(e){}}
-    populateDash(user);populateFacilityFilter();_dashInit=true;
-    document.getElementById('topbar').style.display='flex';
-    document.getElementById('shell').style.display='flex';
-    const ls=document.getElementById('loadScreen');ls.classList.add('out');setTimeout(()=>ls.remove(),700);
+function filterMembers(){
+  const q=document.getElementById('memberSearch')?.value?.toLowerCase()||'';
+  renderMemberList(q?_members.filter(m=>(m.name||'').toLowerCase().includes(q)||(m.email||'').toLowerCase().includes(q)):_members);
+}
+
+function renderMemberList(list){
+  const el=document.getElementById('admList');
+  const countEl=document.getElementById('memberCount');if(countEl)countEl.textContent=`${list.length} member${list.length!==1?'s':''}`;
+  if(!list.length){el.innerHTML='<div class="empty">No members found.</div>';return;}
+  el.innerHTML=list.map(m=>{
+    const tv=parseInt(m.tier)||4;
+    const safeUid=m.uid||'';
+    const safeName=esc(m.name||'Unknown');
+    return`<div class="member-row" id="mr-${safeUid}">
+      <div>
+        <div class="member-name">${safeName}</div>
+        <div class="member-email">${esc(m.email||'')} · ${esc(m.role||'member')}</div>
+      </div>
+      <select id="ts-${safeUid}" style="background:#0a0a0a;border:.5px solid var(--border);color:var(--green);font-family:'Cinzel',serif;font-size:.4rem;letter-spacing:.12em;padding:.42rem .65rem;cursor:pointer;outline:none;width:100%" ${safeUid===_U?.uid?'disabled':''}>
+        <option value="1" ${tv===1?'selected':''}>Tier I</option>
+        <option value="2" ${tv===2?'selected':''}>Tier II</option>
+        <option value="3" ${tv===3?'selected':''}>Tier III</option>
+        <option value="4" ${tv===4?'selected':''}>Tier IV</option>
+      </select>
+      <button class="btn sm" onclick="saveTier('${safeUid}','${safeName}')" ${safeUid===_U?.uid?'disabled':''}>Save</button>
+    </div>`;
+  }).join('');
+}
+
+async function saveTier(uid,memberName){
+  const sel=document.getElementById('ts-'+uid);if(!sel)return;
+  const newTier=parseInt(sel.value);
+  try{
+    const res=await adminFetch(`/members/${uid}`,{method:'PUT',body:JSON.stringify({tier:newTier})});
+    if(!res.ok)throw new Error(`HTTP ${res.status}`);
+    const btn=document.querySelector(`#mr-${uid} .btn`);
+    if(btn){btn.textContent='Saved ✓';btn.style.color='#22c55e';setTimeout(()=>{btn.textContent='Save';btn.style.color='';},2200);}
+    toast(`${memberName} → ${TIER_LABELS[newTier]}`);
+  }catch(e){toast('Failed to save',true);}
+}
+
+/* ── INIT ── */
+window.addEventListener('load', async () => {
+  setLoad('Checking session…');
+  document.getElementById('tbSignOut').addEventListener('click', async () => {
+    await LVOAuth.logout();
+    window.location.href = MARKETING_SITE;
+  });
+
+  const token = LVOAuth.getToken();
+  if (!token) {
+    setLoad('Redirecting…');
+    setTimeout(() => { window.location.href = MARKETING_SITE; }, 600);
+    return;
   }
 
-  if(Clerk.user){await showDash(Clerk.user);}
-  else{
-    setLoad('Checking session…');await new Promise(r=>setTimeout(r,900));
-    if(Clerk.user){await showDash(Clerk.user);}
-    else{setLoad('Redirecting…');setTimeout(()=>{window.location.href='https://ops.wearelvo.com'},800);}
+  setLoad('Authenticating…');
+  const user = await LVOAuth.session();
+
+  if (!user) {
+    setLoad('Session expired. Redirecting…');
+    LVOAuth.clearToken();
+    setTimeout(() => { window.location.href = MARKETING_SITE; }, 800);
+    return;
   }
-  Clerk.addListener(({user})=>{if(!user){_dashInit=false;_profileMounted=false;window.location.href='https://ops.wearelvo.com';}});
+
+  if (user.division !== THIS_DIVISION) {
+    setLoad(`This account is registered under ${user.division}, not ${THIS_DIVISION}. Redirecting…`);
+    setTimeout(() => { window.location.href = MARKETING_SITE; }, 1600);
+    return;
+  }
+
+  setLoad('Loading your profile…');
+  populateDash(user);
+  _dashInit = true;
+
+  document.getElementById('topbar').style.display = 'flex';
+  document.getElementById('shell').style.display = 'flex';
+  const ls = document.getElementById('loadScreen');
+  ls.classList.add('out');
+  setTimeout(() => ls.remove(), 700);
 });
 </script>
 </body>
