@@ -599,7 +599,7 @@
       <div class="fbar">
         <button class="fb active" onclick="filterAnn('all',this)">All</button>
         <button class="fb" onclick="filterAnn('pinned',this)">Pinned</button>
-        <button class="fb" onclick="filterAnn('div',this)">Operation Only</button>
+        <button class="fb" onclick="filterAnn('div',this)">Ops Only</button>
       </div>
       <div id="annList" class="card"><div class="empty" style="padding:1.5rem">Loading…</div></div>
     </div>
@@ -691,7 +691,7 @@
                     <label class="form-label">Division</label>
                     <select class="form-select" id="annDivision">
                       <option value="All">All Divisions</option>
-                      <option value="Operation" selected>Operation</option>
+                      <option value="Ops" selected>Ops</option>
                     </select>
                   </div>
                   <div class="form-group">
@@ -860,7 +860,7 @@
 <script>
 /* ── CONFIG ── */
 const WORKER = LVOAuth.WORKER;
-const THIS_DIVISION = 'Operation';
+const THIS_DIVISION = 'Ops';
 const MARKETING_SITE = 'https://ops.wearelvo.com';
 const DOWN_PAGE = 'https://down.wearelvo.com/';
 const STATUS_POLL_MS = 20000; // re-check every 20s while the dashboard stays open, same as Alliance
@@ -1168,7 +1168,7 @@ async function submitWO(){
   const btn=document.getElementById('woSubmitBtn');
   if(btn){btn.disabled=true;btn.textContent='Submitting…';}
   try{
-    const payload={title,property:document.getElementById('woProperty')?.value?.trim()||null,type:document.getElementById('woType')?.value||null,priority:document.getElementById('woPriority')?.value||'normal',vendor:document.getElementById('woVendor')?.value?.trim()||null,cost:document.getElementById('woCost')?.value?.trim()||null,notes:document.getElementById('woNotes')?.value?.trim()||null,author:_U?.name||'Operation Member'};
+    const payload={title,property:document.getElementById('woProperty')?.value?.trim()||null,type:document.getElementById('woType')?.value||null,priority:document.getElementById('woPriority')?.value||'normal',vendor:document.getElementById('woVendor')?.value?.trim()||null,cost:document.getElementById('woCost')?.value?.trim()||null,notes:document.getElementById('woNotes')?.value?.trim()||null,author:_U?.name||'Ops Member'};
     const res=await workerFetch('/work-orders',{method:'POST',body:JSON.stringify(payload)});
     if(!res.ok)throw new Error(await res.text());
     const created=await res.json();
@@ -1197,7 +1197,7 @@ async function submitVendor(){
   const name=document.getElementById('vName')?.value?.trim();
   if(!name){toast('Vendor name required','err');return;}
   try{
-    const payload={name,trade:document.getElementById('vTrade')?.value?.trim()||null,phone:document.getElementById('vPhone')?.value?.trim()||null,email:document.getElementById('vEmail')?.value?.trim()||null,author:_U?.name||'Operation Member'};
+    const payload={name,trade:document.getElementById('vTrade')?.value?.trim()||null,phone:document.getElementById('vPhone')?.value?.trim()||null,email:document.getElementById('vEmail')?.value?.trim()||null,author:_U?.name||'Ops Member'};
     const res=await workerFetch('/vendors',{method:'POST',body:JSON.stringify(payload)});
     if(!res.ok)throw new Error(await res.text());
     const created=await res.json();
@@ -1227,7 +1227,7 @@ async function submitInsp(){
   const date=document.getElementById('iDate')?.value;
   if(!property||!date){toast('Property and date required','err');return;}
   try{
-    const payload={property,type:document.getElementById('iType')?.value?.trim()||'General',date,result:document.getElementById('iResult')?.value||'upcoming',author:_U?.name||'Operation Member'};
+    const payload={property,type:document.getElementById('iType')?.value?.trim()||'General',date,result:document.getElementById('iResult')?.value||'upcoming',author:_U?.name||'Ops Member'};
     const res=await workerFetch('/inspections',{method:'POST',body:JSON.stringify(payload)});
     if(!res.ok)throw new Error(await res.text());
     const created=await res.json();
@@ -1247,7 +1247,7 @@ async function fetchAnn(manual=false){
     if(!res.ok)throw new Error(`${res.status}`);
     _ann=await res.json();
     renderAnnList();renderOvAnn();
-    const pinned=_ann.filter(a=>a.pinned&&(a.division==='Operation'||a.division==='All'));
+    const pinned=_ann.filter(a=>a.pinned&&(a.division===THIS_DIVISION||a.division==='All'));
     if(pinned.length){const ab=document.getElementById('annBadge');if(ab)ab.style.display='block';document.getElementById('bnAnnDot')?.classList.add('show');}
     setSbStatus(true,'Connected · Live');
     setText('ovAnnTime',`Updated ${new Date().toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'})}`);
@@ -1261,7 +1261,7 @@ async function fetchAnn(manual=false){
 
 function renderOvAnn(){
   const el=document.getElementById('ovAnn');if(!el)return;
-  const items=_ann.filter(a=>a.division==='Operation'||a.division==='All').slice(0,3);
+  const items=_ann.filter(a=>a.division===THIS_DIVISION||a.division==='All').slice(0,3);
   if(!items.length){el.innerHTML='<div class="empty">No announcements yet.</div>';return;}
   el.innerHTML=items.map(a=>{
     const preview=(a.body||'').slice(0,100)+((a.body||'').length>100?'…':'');
@@ -1279,9 +1279,9 @@ function renderOvAnn(){
 function renderAnnList(){
   const el=document.getElementById('annList');if(!el)return;
   let data=[..._ann];
-  if(_annFilter==='pinned')data=data.filter(a=>a.pinned&&(a.division==='Operation'||a.division==='All'));
-  else if(_annFilter==='all')data=data.filter(a=>a.division==='All'||a.division==='Operation');
-  else if(_annFilter==='div')data=data.filter(a=>a.division==='Operation');
+  if(_annFilter==='pinned')data=data.filter(a=>a.pinned&&(a.division===THIS_DIVISION||a.division==='All'));
+  else if(_annFilter==='all')data=data.filter(a=>a.division==='All'||a.division===THIS_DIVISION);
+  else if(_annFilter==='div')data=data.filter(a=>a.division===THIS_DIVISION);
   if(!data.length){el.innerHTML='<div class="empty" style="padding:1.5rem">No announcements found.</div>';return;}
   el.innerHTML=data.map(a=>`<div class="ann${a.pinned?' pinned':''}">
     <div class="ann-hd">
@@ -1365,7 +1365,7 @@ async function loadAdminAnn(){
 async function postAnnouncement(){
   const title=document.getElementById('annTitle')?.value?.trim();
   const body=document.getElementById('annBody')?.value?.trim();
-  const division=document.getElementById('annDivision')?.value||'Operation';
+  const division=document.getElementById('annDivision')?.value||THIS_DIVISION;
   const author=document.getElementById('annAuthor')?.value?.trim()||_U?.name||'LVO Administration';
   if(!title||!body){toast('Title and body required','err');return;}
   try{
@@ -1401,7 +1401,7 @@ function setupAnnPreview(){
   const update=()=>{
     const title=document.getElementById('annTitle')?.value||'';
     const body=document.getElementById('annBody')?.value||'';
-    const div=document.getElementById('annDivision')?.value||'Operation';
+    const div=document.getElementById('annDivision')?.value||THIS_DIVISION;
     const author=document.getElementById('annAuthor')?.value||_U?.name||'LVO Administration';
     const el=document.getElementById('annPreview');if(!el)return;
     if(!title&&!body){el.innerHTML='<div class="ann-body" style="color:var(--dim)">Fill in the form to preview your announcement.</div>';return;}
