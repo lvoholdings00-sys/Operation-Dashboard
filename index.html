@@ -164,9 +164,9 @@
   <div id="divBar">
     <span class="db-brand">LVO Holdings Suite</span>
     <div class="db-links">
-      <a href="/ops/dashboard" class="db-link active">Div 01 · Ops (GRO EHR)</a>
-      <a href="/vindex/dashboard" class="db-link">Div 02 · Vindex (Assets)</a>
-      <a href="/dashboard" class="db-link">Div 03 · Alliance (Capital)</a>
+      <a href="https://dashboard.vindex.wearelvo.com" class="db-link">Div 02 · Vindex (Assets)</a>
+      <a href="https://dashboard.alliance.wearelvo.com" class="db-link">Div 03 · Alliance (Capital)</a>
+      <a href="https://dashboard.ops.wearelvo.com" class="db-link active">Div 01 · Ops (GRO EHR)</a>
       <a href="/download" class="db-link" style="color:var(--green);font-weight:600" download>⬇ Download Files (.zip)</a>
     </div>
   </div>
@@ -174,7 +174,7 @@
   <!-- TOPBAR -->
   <div id="topbar">
     <div class="tb-left">
-      <a href="/ops" class="tb-mark">LVO Operations</a>
+      <a href="https://ops.wearelvo.com" class="tb-mark">LVO Operations</a>
       <div class="tb-divider"></div>
       <span class="tb-tag">General Residential Operations (GRO) EHR</span>
     </div>
@@ -227,8 +227,8 @@
       </div>
 
       <div class="sb-foot">
-        <a href="/ops" class="sb-link">← Operations Portal</a>
-        <a href="/" class="sb-link">← LVO Alliance</a>
+        <a href="https://ops.wearelvo.com" class="sb-link">← Operations Portal</a>
+        <a href="https://wearelvo.com" class="sb-link">← wearelvo.com</a>
         <div style="font-family:'Cinzel',serif;font-size:.34rem;color:var(--dim);margin-top:.8rem;letter-spacing:.2em">
           Texas HHS Licensed GRO EHR · v3.2
         </div>
@@ -1307,7 +1307,7 @@
     // Sign out handler
     document.getElementById('btnSignOut').addEventListener('click', async () => {
       await LVOAuth.logout();
-      window.location.href = '/ops';
+      window.location.href = 'https://ops.wearelvo.com';
     });
 
     // INIT — real session gate. No token or an invalid/expired session sends
@@ -1316,20 +1316,20 @@
     window.addEventListener('load', async () => {
       const token = LVOAuth.getToken();
       if (!token) {
-        window.location.href = '/ops';
+        window.location.href = 'https://ops.wearelvo.com';
         return;
       }
 
       const user = await LVOAuth.session();
       if (!user) {
         LVOAuth.clearToken();
-        window.location.href = '/ops';
+        window.location.href = 'https://ops.wearelvo.com';
         return;
       }
 
       if (user.division !== 'Ops') {
         // Account exists but belongs to a different division's dashboard.
-        window.location.href = '/ops';
+        window.location.href = 'https://ops.wearelvo.com';
         return;
       }
 
